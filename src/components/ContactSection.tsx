@@ -19,9 +19,11 @@ export const ContactSection = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form submission started with data:', formData);
     
     // Simple form validation
     if (!formData.name || !formData.email || !formData.message) {
+      console.log('Form validation failed');
       toast({
         title: "Missing Information",
         description: "Please fill out all required fields.",
@@ -31,20 +33,27 @@ export const ContactSection = () => {
     }
 
     setIsSubmitting(true);
+    console.log('Starting database insertion...');
 
     try {
       // Insert consultation into database
+      const insertData = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || null,
+        sport: formData.sport || null,
+        message: formData.message
+      };
+      
+      console.log('Inserting data into consultations table:', insertData);
+      
       const { data, error } = await supabase
         .from('consultations')
-        .insert({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone || null,
-          sport: formData.sport || null,
-          message: formData.message
-        })
+        .insert(insertData)
         .select()
         .single();
+
+      console.log('Database response - data:', data, 'error:', error);
 
       if (error) {
         console.error('Error inserting consultation:', error);
