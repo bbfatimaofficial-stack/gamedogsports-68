@@ -1,0 +1,195 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Game Dog Sports Design System - Athletic Performance Theme */
+
+@layer base {
+  :root {
+    /* Athletic Color Palette */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 9%;
+
+    /* Game Dog Brand Colors */
+    --game-dog-red: 0 84% 60%;
+    --game-dog-red-dark: 0 73% 41%;
+    --game-dog-black: 0 0% 9%;
+    --game-dog-gray-light: 0 0% 96%;
+    --game-dog-gray-medium: 0 0% 85%;
+    --game-dog-gray-dark: 0 0% 20%;
+
+    /* Component Colors */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 9%;
+
+    --primary: var(--game-dog-red);
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 9%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: var(--game-dog-red);
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 91%;
+    --input: 0 0% 91%;
+    --ring: var(--game-dog-red);
+
+    /* Athletic Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(var(--game-dog-black)) 0%, hsl(var(--game-dog-red) / 0.8) 100%);
+    --gradient-grit: linear-gradient(180deg, hsl(var(--game-dog-gray-dark)) 0%, hsl(var(--game-dog-black)) 100%);
+    --gradient-energy: linear-gradient(45deg, hsl(var(--game-dog-red)) 0%, hsl(var(--game-dog-red-dark)) 100%);
+
+    /* Athletic Shadows */
+    --shadow-glow: 0 0 30px hsl(var(--game-dog-red) / 0.3);
+    --shadow-impact: 0 10px 40px -10px hsl(var(--game-dog-black) / 0.4);
+    --shadow-card: 0 4px 20px hsl(var(--game-dog-black) / 0.1);
+
+    /* Transitions */
+    --transition-athletic: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-glow: box-shadow 0.3s ease, transform 0.2s ease;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: var(--game-dog-black);
+    --foreground: 0 0% 98%;
+
+    --card: var(--game-dog-black);
+    --card-foreground: 0 0% 98%;
+
+    --popover: var(--game-dog-black);
+    --popover-foreground: 0 0% 98%;
+
+    --primary: var(--game-dog-red);
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: var(--game-dog-gray-dark);
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: var(--game-dog-gray-dark);
+    --muted-foreground: 0 0% 65%;
+
+    --accent: var(--game-dog-red);
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: var(--game-dog-red);
+    --destructive-foreground: 0 0% 98%;
+
+    --border: var(--game-dog-gray-dark);
+    --input: var(--game-dog-gray-dark);
+    --ring: var(--game-dog-red);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  /* Athletic Typography */
+  .text-athletic-hero {
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 0.9;
+  }
+
+  .text-athletic-heading {
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  /* Athletic Components */
+  .btn-game-dog {
+    @apply bg-gradient-to-r from-red-600 to-red-700 text-white font-bold px-8 py-4 rounded-lg;
+    @apply hover:from-red-500 hover:to-red-600 hover:shadow-[var(--shadow-glow)];
+    @apply transition-[var(--transition-glow)] transform hover:scale-105;
+    @apply border-2 border-transparent hover:border-red-300;
+  }
+
+  .btn-game-dog-outline {
+    @apply bg-transparent text-white border-2 border-white font-bold px-8 py-4 rounded-lg;
+    @apply hover:bg-white hover:text-gray-900 hover:border-white;
+    @apply transition-[var(--transition-athletic)] transform hover:scale-105;
+  }
+
+  .card-program {
+    @apply bg-gray-800 text-white p-8 rounded-lg;
+    @apply hover:bg-red-600 hover:shadow-[var(--shadow-impact)];
+    @apply transition-[var(--transition-athletic)] transform hover:scale-105;
+    @apply border border-gray-700 hover:border-red-500;
+  }
+
+  /* Gritty Textures */
+  .bg-grit {
+    background-image: 
+      radial-gradient(circle at 25% 25%, hsl(var(--game-dog-black)) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, hsl(var(--game-dog-red) / 0.1) 0%, transparent 50%);
+  }
+
+  .bg-hero-overlay {
+    background: var(--gradient-hero);
+  }
+
+  /* Athletic Animations */
+  .animate-underline-sweep {
+    @apply relative overflow-hidden;
+  }
+
+  .animate-underline-sweep::after {
+    @apply content-[''] absolute bottom-0 left-0 w-full h-0.5 bg-red-600;
+    @apply transform scale-x-0 origin-left transition-transform duration-300;
+  }
+
+  .animate-underline-sweep:hover::after {
+    @apply scale-x-100;
+  }
+
+  .animate-glow-pulse {
+    animation: glow-pulse 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow-pulse {
+    from {
+      box-shadow: 0 0 20px hsl(var(--game-dog-red) / 0.4);
+    }
+    to {
+      box-shadow: 0 0 30px hsl(var(--game-dog-red) / 0.6);
+    }
+  }
+}
