@@ -55,7 +55,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Admin notification email
     try {
       const adminEmailResponse = await resend.emails.send({
-        from: 'Game Dog Sports <notifications@resend.dev>',
+        from: 'Game Dog Sports <onboarding@resend.dev>',
         to: ['ContactcarolinaGD@gmail.com'],
         subject: `New Consultation Request from ${name}`,
         html: `
@@ -105,7 +105,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Thank-you email to user
     try {
       const userEmailResponse = await resend.emails.send({
-        from: 'Game Dog Sports <contact@resend.dev>',
+        from: 'Game Dog Sports <onboarding@resend.dev>',
         to: [email],
         subject: 'Thank you for your consultation request - Game Dog Sports',
         html: `
