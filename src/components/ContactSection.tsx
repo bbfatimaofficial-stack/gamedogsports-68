@@ -47,13 +47,11 @@ export const ContactSection = () => {
       
       console.log('Inserting data into consultations table:', insertData);
       
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('consultations')
-        .insert(insertData)
-        .select()
-        .single();
+        .insert(insertData);
 
-      console.log('Database response - data:', data, 'error:', error);
+      console.log('Database insert completed - error:', error);
 
       if (error) {
         console.error('Error inserting consultation:', error);
@@ -67,7 +65,7 @@ export const ContactSection = () => {
 
       // Trigger email notifications via Edge Function
       const { error: emailError } = await supabase.functions.invoke('send-consultation-emails', {
-        body: { consultationId: data.id }
+        body: insertData
       });
 
       if (emailError) {

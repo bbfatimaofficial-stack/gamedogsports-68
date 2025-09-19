@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import { Resend } from "npm:resend@2.0.0";
 
 const corsHeaders = {
@@ -7,8 +6,12 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface ConsultationEmailRequest {
-  consultationId: string;
+interface ConsultationPayload {
+  name: string;
+  email: string;
+  phone?: string | null;
+  sport?: string | null;
+  message: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -18,67 +21,49 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    console.log('Processing consultation email request...');
-    
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const resendApiKey = Deno.env.get('RESEND_API_KEY');
+    console.log('Processing consultation email request (direct payload)...');
 
+    const resendApiKey = Deno.env.get('RESEND_API_KEY');
     if (!resendApiKey) {
       throw new Error('RESEND_API_KEY not configured');
     }
 
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const resend = new Resend(resendApiKey);
 
-    const { consultationId }: ConsultationEmailRequest = await req.json();
+    const payload: ConsultationPayload = await req.json();
+    const { name, email, phone, sport, message } = payload;
 
-    // Fetch consultation details from database
-    const { data: consultation, error: fetchError } = await supabase
-      .from('consultations')
-      .select('*')
-      .eq('id', consultationId)
-      .single();
-
-    if (fetchError || !consultation) {
-      console.error('Error fetching consultation:', fetchError);
-      throw new Error('Consultation not found');
+    if (!name || !email || !message) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required fields: name, email, message' }),
+        { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
     }
 
-    console.log('Consultation fetched:', consultation.name);
-
-    // Send admin notification email
+    // Admin notification email
     const adminEmailResponse = await resend.emails.send({
-      from: "Game Dog Sports <notifications@resend.dev>",
-      to: ["ContactcarolinaGD@gmail.com"],
-      subject: `New Consultation Request from ${consultation.name}`,
+      from: 'Game Dog Sports <notifications@resend.dev>',
+      to: ['ContactcarolinaGD@gmail.com'],
+      subject: `New Consultation Request from ${name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background-color: #000; color: #fff; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
             <h1 style="margin: 0; color: #fff;">🏆 New Consultation Request</h1>
           </div>
-          
           <div style="background-color: #f5f5f5; padding: 30px; border-radius: 0 0 8px 8px;">
             <h2 style="color: #d32f2f; margin-top: 0;">Contact Details</h2>
-            
             <div style="background-color: #fff; padding: 20px; border-radius: 6px; margin: 15px 0; border-left: 4px solid #d32f2f;">
-              <p style="margin: 5px 0;"><strong>Name:</strong> ${consultation.name}</p>
-              <p style="margin: 5px 0;"><strong>Email:</strong> ${consultation.email}</p>
-              ${consultation.phone ? `<p style="margin: 5px 0;"><strong>Phone:</strong> ${consultation.phone}</p>` : ''}
-              ${consultation.sport ? `<p style="margin: 5px 0;"><strong>Primary Sport:</strong> ${consultation.sport}</p>` : ''}
+              <p style="margin: 5px 0;"><strong>Name:</strong> ${name}</p>
+              <p style="margin: 5px 0;"><strong>Email:</strong> ${email}</p>
+              ${phone ? `<p style="margin: 5px 0;"><strong>Phone:</strong> ${phone}</p>` : ''}
+              ${sport ? `<p style=\"margin: 5px 0;\"><strong>Primary Sport:</strong> ${sport}</p>` : ''}
             </div>
-            
             <h3 style="color: #d32f2f;">Message:</h3>
             <div style="background-color: #fff; padding: 20px; border-radius: 6px; border: 1px solid #ddd;">
-              <p style="margin: 0; line-height: 1.6;">${consultation.message}</p>
+              <p style="margin: 0; line-height: 1.6;">${message}</p>
             </div>
-            
-            <div style="margin-top: 20px; padding: 15px; background-color: #e8f5e8; border-radius: 6px;">
-              <p style="margin: 0; color: #2d5a2d;"><strong>📅 Submitted:</strong> ${new Date(consultation.created_at).toLocaleString()}</p>
-            </div>
-            
             <div style="text-align: center; margin-top: 30px;">
-              <a href="mailto:${consultation.email}" style="background-color: #d32f2f; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Reply to ${consultation.name}</a>
+              <a href="mailto:${email}" style="background-color: #d32f2f; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Reply to ${name}</a>
             </div>
           </div>
         </div>
@@ -87,25 +72,22 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('Admin email sent:', adminEmailResponse.data?.id);
 
-    // Send thank you email to user
+    // Thank-you email to user
     const userEmailResponse = await resend.emails.send({
-      from: "Game Dog Sports <contact@resend.dev>",
-      to: [consultation.email],
-      subject: "Thank you for your consultation request - Game Dog Sports",
+      from: 'Game Dog Sports <contact@resend.dev>',
+      to: [email],
+      subject: 'Thank you for your consultation request - Game Dog Sports',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background-color: #000; color: #fff; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
             <h1 style="margin: 0; color: #fff;">🏆 Game Dog Sports</h1>
             <p style="margin: 10px 0 0 0; color: #ccc;">Elite Athletic Training</p>
           </div>
-          
           <div style="background-color: #f5f5f5; padding: 40px; border-radius: 0 0 8px 8px;">
-            <h2 style="color: #d32f2f; margin-top: 0;">Thank You, ${consultation.name}!</h2>
-            
+            <h2 style="color: #d32f2f; margin-top: 0;">Thank You, ${name}!</h2>
             <p style="font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
               We've received your consultation request and we're excited to help you reach your athletic potential.
             </p>
-            
             <div style="background-color: #fff; padding: 25px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #d32f2f;">
               <h3 style="color: #d32f2f; margin-top: 0;">What happens next?</h3>
               <ul style="padding-left: 20px; line-height: 1.8;">
@@ -114,21 +96,18 @@ const handler = async (req: Request): Promise<Response> => {
                 <li><strong>Get started:</strong> Begin your journey to becoming the athlete you're meant to be</li>
               </ul>
             </div>
-            
             <div style="background-color: #fff; padding: 20px; border-radius: 6px; margin: 20px 0;">
               <h4 style="color: #333; margin-top: 0;">Your submitted information:</h4>
-              <p style="margin: 5px 0;"><strong>Email:</strong> ${consultation.email}</p>
-              ${consultation.phone ? `<p style="margin: 5px 0;"><strong>Phone:</strong> ${consultation.phone}</p>` : ''}
-              ${consultation.sport ? `<p style="margin: 5px 0;"><strong>Primary Sport:</strong> ${consultation.sport}</p>` : ''}
+              <p style="margin: 5px 0;"><strong>Email:</strong> ${email}</p>
+              ${phone ? `<p style=\"margin: 5px 0;\"><strong>Phone:</strong> ${phone}</p>` : ''}
+              ${sport ? `<p style=\"margin: 5px 0;\"><strong>Primary Sport:</strong> ${sport}</p>` : ''}
             </div>
-            
             <div style="background-color: #e8f5e8; padding: 20px; border-radius: 6px; margin: 25px 0;">
               <p style="margin: 0; color: #2d5a2d;">
                 <strong>📧 Questions?</strong> Email us at ContactcarolinaGD@gmail.com<br>
                 <strong>📞 Urgent?</strong> Call us at 910-638-4342
               </p>
             </div>
-            
             <div style="text-align: center; margin-top: 30px;">
               <p style="color: #666; font-style: italic;">"Your championship journey starts now."</p>
               <p style="margin: 20px 0 0 0; color: #999; font-size: 12px;">
@@ -143,27 +122,14 @@ const handler = async (req: Request): Promise<Response> => {
     console.log('User email sent:', userEmailResponse.data?.id);
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        adminEmail: adminEmailResponse.data?.id,
-        userEmail: userEmailResponse.data?.id 
-      }), 
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-          ...corsHeaders,
-        },
-      }
+      JSON.stringify({ success: true, adminEmail: adminEmailResponse.data?.id, userEmail: userEmailResponse.data?.id }),
+      { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
     );
   } catch (error: any) {
-    console.error("Error in send-consultation-emails function:", error);
+    console.error('Error in send-consultation-emails function:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
+      { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
     );
   }
 };
