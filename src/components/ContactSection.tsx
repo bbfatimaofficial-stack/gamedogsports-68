@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Phone, MapPin, Send, Users, Clock, TrendingUp } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -13,9 +14,10 @@ export const ContactSection = () => {
     sport: '',
     message: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Simple form validation
@@ -28,20 +30,66 @@ export const ContactSection = () => {
       return;
     }
 
-    // Simulate form submission
-    toast({
-      title: "Message Sent Successfully!",
-      description: "We'll contact you within 24 hours to discuss your training goals.",
-    });
+    setIsSubmitting(true);
 
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      sport: '',
-      message: ''
-    });
+    try {
+      // Insert consultation into database
+      const { data, error } = await supabase
+        .from('consultations')
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || null,
+          sport: formData.sport || null,
+          message: formData.message
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error inserting consultation:', error);
+        toast({
+          title: "Submission Failed",
+          description: "There was an error submitting your consultation. Please try again.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Trigger email notifications via Edge Function
+      const { error: emailError } = await supabase.functions.invoke('send-consultation-emails', {
+        body: { consultationId: data.id }
+      });
+
+      if (emailError) {
+        console.error('Email notification error:', emailError);
+        // Still show success since the data was saved
+      }
+
+      toast({
+        title: "Consultation Request Submitted!",
+        description: "We'll contact you within 24 hours to discuss your training goals.",
+      });
+
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        sport: '',
+        message: ''
+      });
+
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast({
+        title: "Submission Failed",
+        description: "There was an unexpected error. Please try again or contact us directly.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -216,9 +264,13 @@ export const ContactSection = () => {
                 />
               </div>
 
-              <Button type="submit" className="w-full btn-game-dog text-lg py-4 flex items-center justify-center gap-2">
+              <Button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="w-full btn-game-dog text-lg py-4 flex items-center justify-center gap-2"
+              >
                 <Send className="w-5 h-5" />
-                Contact Game Dog Sports
+                {isSubmitting ? 'Submitting...' : 'Contact Game Dog Sports'}
               </Button>
 
               <p className="text-xs text-game-dog-gray-medium text-center font-body">
