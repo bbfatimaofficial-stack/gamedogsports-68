@@ -111,7 +111,7 @@ const handler = async (req: Request): Promise<Response> => {
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="background-color: #000; color: #fff; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
-              <h1 style="margin: 0; color: #fff;">🏆 Game Dog Sports</h1>
+              <h1 style="margin: 0; color: #fff;">🏆 Game Dogs Sports</h1>
               <p style="margin: 10px 0 0 0; color: #ccc;">Elite Athletic Training</p>
             </div>
             <div style="background-color: #f5f5f5; padding: 40px; border-radius: 0 0 8px 8px;">
@@ -142,7 +142,7 @@ const handler = async (req: Request): Promise<Response> => {
               <div style="text-align: center; margin-top: 30px;">
                 <p style="color: #666; font-style: italic;">"Your championship journey starts now."</p>
                 <p style="margin: 20px 0 0 0; color: #999; font-size: 12px;">
-                  © Game Dog Sports | 1122 Hawkins Ave, Sanford, NC 27330
+                  © Game Dogs Sports | 1122 Hawkins Ave, Sanford, NC 27330
                 </p>
               </div>
             </div>
