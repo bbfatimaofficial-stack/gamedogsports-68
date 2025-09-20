@@ -1,7 +1,7 @@
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import gameDogLogo from "@/assets/game-dog-logo.png";
+import gameDogsLogo from "@/assets/game-dogs-sports-logo.png";
 
 export const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,15 +19,12 @@ export const Navigation = () => {
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex-shrink-0 flex items-center space-x-3">
+          <div className="flex-shrink-0 flex items-center">
             <img 
-              src={gameDogLogo} 
+              src={gameDogsLogo} 
               alt="Game Dogs Sports Logo" 
-              className="h-8 w-8 object-contain"
+              className="h-10 w-auto object-contain"
             />
-            <h1 className="text-athletic-heading text-xl text-white">
-              Game Dogs <span className="text-game-dog-red">Sports</span>
-            </h1>
           </div>
 
           {/* Desktop Navigation */}
