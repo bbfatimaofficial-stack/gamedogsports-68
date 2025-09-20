@@ -117,7 +117,7 @@ export const ContactSection = () => {
             </h2>
             
             <p className="text-xl text-game-dog-gray-dark mb-12 font-body leading-relaxed">
-              Your championship journey begins with a single decision. Contact Game Dog Sports today and discover what you're truly capable of achieving.
+              Your championship journey begins with a single decision. Contact Game Dogs Sports today and discover what you're truly capable of achieving.
             </p>
 
             {/* Contact Cards */}
@@ -277,11 +277,11 @@ export const ContactSection = () => {
                 className="w-full btn-game-dog text-lg py-4 flex items-center justify-center gap-2"
               >
                 <Send className="w-5 h-5" />
-                {isSubmitting ? 'Submitting...' : 'Contact Game Dog Sports'}
+                {isSubmitting ? 'Submitting...' : 'Contact Game Dogs Sports'}
               </Button>
 
               <p className="text-xs text-game-dog-gray-medium text-center font-body">
-                By submitting this form, you agree to receive communications from Game Dog Sports. We respect your privacy and will never share your information.
+                By submitting this form, you agree to receive communications from Game Dogs Sports. We respect your privacy and will never share your information.
               </p>
             </form>
           </div>

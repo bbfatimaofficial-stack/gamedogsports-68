@@ -9,7 +9,7 @@ export const AboutSection = () => {
           <div className="relative">
             <img 
               src={coachNick} 
-              alt="Nick Maness - Head Coach at Game Dog Sports" 
+              alt="Nick Maness - Head Coach at Game Dogs Sports" 
               className="rounded-lg shadow-2xl w-full max-w-md mx-auto lg:max-w-full"
             />
             <div className="absolute -bottom-6 -right-6 bg-game-dog-red text-white p-4 rounded-lg font-athletic text-xl">
@@ -28,7 +28,7 @@ export const AboutSection = () => {
 
             <div className="space-y-6 text-lg text-gray-700 font-body leading-relaxed">
               <p>
-                <strong className="text-game-dog-black">Nick Maness</strong> brings over 15 years of elite athletic training experience to Game Dog Sports. From working with high school prospects to collegiate athletes, Nick has developed a proven system that transforms raw talent into championship performance.
+                <strong className="text-game-dog-black">Nick Maness</strong> brings over 15 years of elite athletic training experience to Game Dogs Sports. From working with high school prospects to collegiate athletes, Nick has developed a proven system that transforms raw talent into championship performance.
               </p>
               
               <p>
@@ -36,7 +36,7 @@ export const AboutSection = () => {
               </p>
 
               <p>
-                At Game Dog Sports, we don't just train your body - we develop your mind, build your character, and ignite the competitive fire that separates champions from everyone else.
+                At Game Dogs Sports, we don't just train your body - we develop your mind, build your character, and ignite the competitive fire that separates champions from everyone else.
               </p>
             </div>
 
@@ -45,7 +45,7 @@ export const AboutSection = () => {
                 Our Story: Built on Grit, Grounded in Results
               </h3>
               <p className="font-body">
-                Game Dog Sports was founded on the belief that every athlete has untapped potential waiting to be unleashed. Through personalized training, cutting-edge techniques, and an uncompromising commitment to excellence, we've helped hundreds of athletes reach their peak performance.
+                Game Dogs Sports was founded on the belief that every athlete has untapped potential waiting to be unleashed. Through personalized training, cutting-edge techniques, and an uncompromising commitment to excellence, we've helped hundreds of athletes reach their peak performance.
               </p>
             </div>
           </div>

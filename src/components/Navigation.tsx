@@ -22,11 +22,11 @@ export const Navigation = () => {
           <div className="flex-shrink-0 flex items-center space-x-3">
             <img 
               src={gameDogLogo} 
-              alt="Game Dog Sports Logo" 
+              alt="Game Dogs Sports Logo" 
               className="h-8 w-8 object-contain"
             />
             <h1 className="text-athletic-heading text-xl text-white">
-              Game Dog <span className="text-game-dog-red">Sports</span>
+              Game Dogs <span className="text-game-dog-red">Sports</span>
             </h1>
           </div>
 

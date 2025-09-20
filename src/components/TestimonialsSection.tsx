@@ -15,7 +15,7 @@ export const TestimonialsSection = () => {
     {
       name: "Marcus Rodriguez",
       role: "High School Baseball Player",
-      quote: "Game Dog Sports completely transformed my game. I went from riding the bench to starting varsity and getting college scouts at my games. Coach Nick doesn't just train your body - he builds champions.",
+      quote: "Game Dogs Sports completely transformed my game. I went from riding the bench to starting varsity and getting college scouts at my games. Coach Nick doesn't just train your body - he builds champions.",
       achievement: "Varsity Starter • College Recruit",
       avatar: "MR",
       image: marcusImg,
@@ -39,7 +39,7 @@ export const TestimonialsSection = () => {
     {
       name: "David Thompson",
       role: "Parent", 
-      quote: "My son was struggling with confidence on the field. After 6 months at Game Dog Sports, he's not only a better player but a more confident young man. The character development is just as important as the athletic training.",
+      quote: "My son was struggling with confidence on the field. After 6 months at Game Dogs Sports, he's not only a better player but a more confident young man. The character development is just as important as the athletic training.",
       achievement: "Proud Parent • Life Changed",
       avatar: "DT",
       image: davidImg,
