@@ -12,6 +12,84 @@ interface ConsultationPayload {
   phone?: string | null;
   sport?: string | null;
   message: string;
+  honeypot?: string; // Spam prevention field
+}
+
+// Rate limiting storage (in-memory for edge function)
+const rateLimit = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_MAX = 5; // Max 5 submissions per hour per IP
+const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour in milliseconds
+
+// Email validation regex
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Input sanitization helper
+function sanitizeString(input: string): string {
+  return input
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\//g, '&#x2F;')
+    .trim();
+}
+
+// Rate limiting check
+function checkRateLimit(clientIP: string): boolean {
+  const now = Date.now();
+  const userLimit = rateLimit.get(clientIP);
+  
+  if (!userLimit || now > userLimit.resetTime) {
+    // Reset or initialize rate limit
+    rateLimit.set(clientIP, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+    return true;
+  }
+  
+  if (userLimit.count >= RATE_LIMIT_MAX) {
+    console.warn(`Rate limit exceeded for IP: ${clientIP}`);
+    return false;
+  }
+  
+  userLimit.count++;
+  return true;
+}
+
+// Enhanced validation
+function validatePayload(payload: ConsultationPayload): { valid: boolean; error?: string } {
+  // Check honeypot field for spam
+  if (payload.honeypot && payload.honeypot.trim() !== '') {
+    console.warn('Spam detected: honeypot field filled');
+    return { valid: false, error: 'Invalid submission' };
+  }
+  
+  // Validate required fields
+  if (!payload.name || !payload.email || !payload.message) {
+    return { valid: false, error: 'Missing required fields: name, email, message' };
+  }
+  
+  // Validate field lengths
+  if (payload.name.length < 2 || payload.name.length > 100) {
+    return { valid: false, error: 'Name must be between 2 and 100 characters' };
+  }
+  
+  if (payload.message.length < 10 || payload.message.length > 2000) {
+    return { valid: false, error: 'Message must be between 10 and 2000 characters' };
+  }
+  
+  // Validate email format
+  if (!EMAIL_REGEX.test(payload.email)) {
+    return { valid: false, error: 'Invalid email format' };
+  }
+  
+  // Validate phone if provided
+  if (payload.phone && payload.phone.length > 0) {
+    const phoneClean = payload.phone.replace(/\D/g, '');
+    if (phoneClean.length < 10 || phoneClean.length > 15) {
+      return { valid: false, error: 'Invalid phone number format' };
+    }
+  }
+  
+  return { valid: true };
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -21,7 +99,21 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    console.log('Processing consultation email request (direct payload)...');
+    // Get client IP for rate limiting
+    const clientIP = req.headers.get('x-forwarded-for') || 
+                    req.headers.get('x-real-ip') || 
+                    'unknown';
+    
+    console.log('Processing consultation email request...', { clientIP });
+
+    // Check rate limit
+    if (!checkRateLimit(clientIP)) {
+      console.warn(`Rate limit exceeded for IP: ${clientIP}`);
+      return new Response(
+        JSON.stringify({ error: 'Too many requests. Please try again in an hour.' }),
+        { status: 429, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
+    }
 
     const resendApiKey = Deno.env.get('RESEND_API_KEY');
     if (!resendApiKey) {
@@ -33,23 +125,36 @@ const handler = async (req: Request): Promise<Response> => {
     const resend = new Resend(resendApiKey);
 
     const payload: ConsultationPayload = await req.json();
-    console.log('Received payload:', { 
-      name: payload.name, 
-      email: payload.email, 
-      phone: payload.phone, 
-      sport: payload.sport,
-      messageLength: payload.message?.length 
-    });
-
-    const { name, email, phone, sport, message } = payload;
-
-    if (!name || !email || !message) {
-      console.error('Missing required fields:', { name: !!name, email: !!email, message: !!message });
+    
+    // Enhanced validation
+    const validation = validatePayload(payload);
+    if (!validation.valid) {
+      console.error('Validation failed:', validation.error);
       return new Response(
-        JSON.stringify({ error: 'Missing required fields: name, email, message' }),
+        JSON.stringify({ error: validation.error }),
         { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
       );
     }
+
+    // Sanitize inputs
+    const sanitizedPayload = {
+      name: sanitizeString(payload.name),
+      email: payload.email.toLowerCase().trim(),
+      phone: payload.phone ? sanitizeString(payload.phone) : null,
+      sport: payload.sport ? sanitizeString(payload.sport) : null,
+      message: sanitizeString(payload.message)
+    };
+
+    console.log('Validated payload:', { 
+      name: sanitizedPayload.name, 
+      email: sanitizedPayload.email, 
+      phone: sanitizedPayload.phone, 
+      sport: sanitizedPayload.sport,
+      messageLength: sanitizedPayload.message?.length,
+      clientIP 
+    });
+
+    const { name, email, phone, sport, message } = sanitizedPayload;
 
     console.log('Sending admin notification email...');
     // Admin notification email

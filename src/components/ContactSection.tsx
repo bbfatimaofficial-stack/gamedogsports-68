@@ -12,21 +12,70 @@ export const ContactSection = () => {
     email: '',
     phone: '',
     sport: '',
-    message: ''
+    message: '',
+    honeypot: '' // Spam prevention field
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submission started with data:', formData);
+    console.log('Form submission started');
     
-    // Simple form validation
+    // Check honeypot field (should be empty)
+    if (formData.honeypot.trim() !== '') {
+      console.warn('Spam detected: honeypot field filled');
+      // Silently ignore spam submissions
+      return;
+    }
+    
+    // Enhanced form validation
     if (!formData.name || !formData.email || !formData.message) {
       console.log('Form validation failed');
       toast({
         title: "Missing Information",
         description: "Please fill out all required fields.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validate name length
+    if (formData.name.trim().length < 2 || formData.name.trim().length > 100) {
+      toast({
+        title: "Invalid Name",
+        description: "Name must be between 2 and 100 characters.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validate message length
+    if (formData.message.trim().length < 10 || formData.message.trim().length > 2000) {
+      toast({
+        title: "Invalid Message",
+        description: "Message must be between 10 and 2000 characters.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validate phone if provided
+    if (formData.phone.trim() && formData.phone.replace(/\D/g, '').length < 10) {
+      toast({
+        title: "Invalid Phone",
+        description: "Please enter a valid phone number.",
         variant: "destructive"
       });
       return;
@@ -63,13 +112,22 @@ export const ContactSection = () => {
         return;
       }
 
-      // Trigger email notifications via Edge Function
+      // Trigger email notifications via Edge Function (include honeypot for server-side spam detection)
       const { error: emailError } = await supabase.functions.invoke('send-consultation-emails', {
-        body: insertData
+        body: { ...insertData, honeypot: formData.honeypot }
       });
 
       if (emailError) {
         console.error('Email notification error:', emailError);
+        // Handle rate limiting error specifically
+        if (emailError.message?.includes('Too many requests')) {
+          toast({
+            title: "Rate Limited",
+            description: "Too many submissions. Please try again in an hour.",
+            variant: "destructive"
+          });
+          return;
+        }
         // Still show success since the data was saved
       }
 
@@ -84,7 +142,8 @@ export const ContactSection = () => {
         email: '',
         phone: '',
         sport: '',
-        message: ''
+        message: '',
+        honeypot: ''
       });
 
     } catch (error) {
@@ -259,7 +318,7 @@ export const ContactSection = () => {
               </div>
 
               <div>
-                <label className="text-white font-body font-semibold mb-2 block">Message *</label>
+                <label className="text-white font-body font-semibold mb-2 block">Message * (10-2000 characters)</label>
                 <Textarea
                   name="message"
                   value={formData.message}
@@ -268,6 +327,24 @@ export const ContactSection = () => {
                   rows={5}
                   className="bg-game-dog-gray-dark border-game-dog-gray-medium text-white placeholder-game-dog-gray-medium focus:border-game-dog-red resize-none"
                   required
+                  maxLength={2000}
+                />
+                <div className="text-xs text-game-dog-gray-medium mt-1 text-right">
+                  {formData.message.length}/2000
+                </div>
+              </div>
+
+              {/* Honeypot field for spam prevention - hidden from users */}
+              <div style={{ display: 'none' }} aria-hidden="true">
+                <label htmlFor="honeypot">Leave this field empty</label>
+                <input
+                  type="text"
+                  name="honeypot"
+                  id="honeypot"
+                  value={formData.honeypot}
+                  onChange={handleChange}
+                  tabIndex={-1}
+                  autoComplete="off"
                 />
               </div>
 
