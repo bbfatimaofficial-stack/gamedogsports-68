@@ -111,7 +111,9 @@ const handler = async (req: Request): Promise<Response> => {
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="background-color: #000; color: #fff; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
-              <img src="https://nzjtdlvebqrglfbaurza.supabase.co/storage/v1/object/public/assets/game-dogs-sports-logo.png" alt="Game Dogs Sports Logo" style="height: 60px; width: auto; margin-bottom: 10px;" />
+              <h1 style="margin: 0; color: #fff; font-size: 32px; font-weight: bold;">
+                <span style="color: #fff;">Game Dogs</span> <span style="color: #dc2626;">Sports</span>
+              </h1>
               <p style="margin: 10px 0 0 0; color: #ccc;">Elite Athletic Training</p>
             </div>
             <div style="background-color: #f5f5f5; padding: 40px; border-radius: 0 0 8px 8px;">

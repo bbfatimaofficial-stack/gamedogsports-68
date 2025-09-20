@@ -109,7 +109,15 @@ export const TestimonialsSection = () => {
           <p className="text-game-dog-gray-light mb-8 text-lg font-body">
             Ready to write your own success story?
           </p>
-          <Button className="btn-game-dog text-xl px-12 py-6 flex items-center gap-3 mx-auto">
+          <Button 
+            className="btn-game-dog text-xl px-12 py-6 flex items-center gap-3 mx-auto"
+            onClick={() => {
+              const contactSection = document.getElementById('contact');
+              if (contactSection) {
+                contactSection.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+          >
             <Target className="w-6 h-6" />
             Join the Pack
           </Button>
