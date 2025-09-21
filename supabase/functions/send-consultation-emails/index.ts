@@ -163,7 +163,7 @@ const handler = async (req: Request): Promise<Response> => {
     
     try {
       const adminEmailResponse = await resend.emails.send({
-        from: 'Game Dogs Sports <onboarding@resend.dev>',
+        from: 'Game Dogs Sports <noreply@gamedogsports.com>',
         to: ['ContactcarolinaGD@gmail.com'],
         subject: `🚨 New Consultation Request from ${name}`,
         html: `
@@ -208,7 +208,7 @@ const handler = async (req: Request): Promise<Response> => {
         console.log('✅ Admin email sent successfully! Email ID:', adminEmailResponse.data.id);
         console.log('Admin email details:', {
           id: adminEmailResponse.data.id,
-          from: 'Game Dogs Sports <onboarding@resend.dev>',
+          from: 'Game Dogs Sports <noreply@gamedogsports.com>',
           to: 'ContactcarolinaGD@gmail.com',
           subject: `🚨 New Consultation Request from ${name}`,
           timestamp: new Date().toISOString()
@@ -237,7 +237,7 @@ const handler = async (req: Request): Promise<Response> => {
     
     try {
       const userEmailResponse = await resend.emails.send({
-        from: 'Game Dogs Sports <onboarding@resend.dev>',
+        from: 'Game Dogs Sports <noreply@gamedogsports.com>',
         to: [email],
         subject: 'Thank you for your consultation request - Game Dogs Sports',
         html: `
