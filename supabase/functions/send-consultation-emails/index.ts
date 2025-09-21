@@ -158,11 +158,14 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('Sending admin notification email...');
     // Admin notification email
+    let adminEmailSuccess = false;
+    let adminEmailError = null;
+    
     try {
       const adminEmailResponse = await resend.emails.send({
         from: 'Game Dogs Sports <onboarding@resend.dev>',
         to: ['ContactcarolinaGD@gmail.com'],
-        subject: `New Consultation Request from ${name}`,
+        subject: `🚨 New Consultation Request from ${name}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="background-color: #000; color: #fff; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
@@ -183,31 +186,55 @@ const handler = async (req: Request): Promise<Response> => {
               <div style="text-align: center; margin-top: 30px;">
                 <a href="mailto:${email}" style="background-color: #d32f2f; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Reply to ${name}</a>
               </div>
+              <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
+              <p style="font-size: 12px; color: #666; text-align: center;">
+                This email was sent from your Game Dogs Sports website contact form.<br>
+                Submitted on: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })} EST
+              </p>
             </div>
           </div>
         `,
       });
 
-      console.log('Admin email response:', adminEmailResponse);
+      console.log('Admin email API response:', JSON.stringify(adminEmailResponse, null, 2));
       
       if (adminEmailResponse.error) {
-        console.error('Admin email error:', adminEmailResponse.error);
+        console.error('Admin email API returned error:', adminEmailResponse.error);
+        adminEmailError = adminEmailResponse.error.message || 'Unknown admin email error';
         throw new Error(`Admin email failed: ${adminEmailResponse.error.message}`);
       }
 
-      console.log('Admin email sent successfully:', adminEmailResponse.data?.id);
+      if (adminEmailResponse.data?.id) {
+        console.log('✅ Admin email sent successfully! Email ID:', adminEmailResponse.data.id);
+        console.log('Admin email details:', {
+          id: adminEmailResponse.data.id,
+          from: 'Game Dogs Sports <onboarding@resend.dev>',
+          to: 'ContactcarolinaGD@gmail.com',
+          subject: `🚨 New Consultation Request from ${name}`,
+          timestamp: new Date().toISOString()
+        });
+        adminEmailSuccess = true;
+      } else {
+        console.error('❌ Admin email response missing data.id:', adminEmailResponse);
+        adminEmailError = 'Admin email response missing ID';
+      }
     } catch (adminError: any) {
-      console.error('Failed to send admin email:', adminError);
+      console.error('❌ CRITICAL: Failed to send admin email:', adminError);
       console.error('Admin email error details:', {
         message: adminError.message,
         stack: adminError.stack,
-        name: adminError.name
+        name: adminError.name,
+        code: adminError.code
       });
+      adminEmailError = adminError.message;
       // Don't throw here, continue with user email
     }
 
     console.log('Sending thank-you email to user...');
     // Thank-you email to user
+    let userEmailSuccess = false;
+    let userEmailError = null;
+    
     try {
       const userEmailResponse = await resend.emails.send({
         from: 'Game Dogs Sports <onboarding@resend.dev>',
@@ -257,29 +284,61 @@ const handler = async (req: Request): Promise<Response> => {
         `,
       });
 
-      console.log('User email response:', userEmailResponse);
+      console.log('User email API response:', JSON.stringify(userEmailResponse, null, 2));
       
       if (userEmailResponse.error) {
-        console.error('User email error:', userEmailResponse.error);
+        console.error('User email API returned error:', userEmailResponse.error);
+        userEmailError = userEmailResponse.error.message || 'Unknown user email error';
         throw new Error(`User email failed: ${userEmailResponse.error.message}`);
       }
 
-      console.log('User email sent successfully:', userEmailResponse.data?.id);
+      if (userEmailResponse.data?.id) {
+        console.log('✅ User email sent successfully! Email ID:', userEmailResponse.data.id);
+        userEmailSuccess = true;
+      } else {
+        console.error('❌ User email response missing data.id:', userEmailResponse);
+        userEmailError = 'User email response missing ID';
+      }
     } catch (userError: any) {
-      console.error('Failed to send user email:', userError);
+      console.error('❌ Failed to send user email:', userError);
       console.error('User email error details:', {
         message: userError.message,
         stack: userError.stack,
-        name: userError.name
+        name: userError.name,
+        code: userError.code
       });
-      // Continue execution, user will still get success response for form submission
+      userEmailError = userError.message;
+    }
+
+    // Comprehensive email delivery summary
+    console.log('📊 EMAIL DELIVERY SUMMARY:');
+    console.log('==========================');
+    console.log(`Admin Email: ${adminEmailSuccess ? '✅ SUCCESS' : '❌ FAILED'}`);
+    if (adminEmailError) console.log(`Admin Error: ${adminEmailError}`);
+    console.log(`User Email: ${userEmailSuccess ? '✅ SUCCESS' : '❌ FAILED'}`);
+    if (userEmailError) console.log(`User Error: ${userEmailError}`);
+    console.log('==========================');
+
+    // Determine response based on email delivery status
+    const responseData = {
+      success: true,
+      message: 'Consultation request processed successfully',
+      emailStatus: {
+        adminEmail: adminEmailSuccess,
+        userEmail: userEmailSuccess,
+        adminError: adminEmailError,
+        userError: userEmailError
+      }
+    };
+
+    // If admin email failed, add a warning (but don't fail the request)
+    if (!adminEmailSuccess) {
+      responseData.message = 'Consultation request received. Admin notification may have failed - please contact us directly if urgent.';
+      console.warn('⚠️  ADMIN EMAIL DELIVERY FAILED - Admin may not receive notification!');
     }
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        message: 'Consultation request processed successfully'
-      }),
+      JSON.stringify(responseData),
       { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
     );
   } catch (error: any) {

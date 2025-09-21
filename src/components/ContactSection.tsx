@@ -113,14 +113,17 @@ export const ContactSection = () => {
       }
 
       // Trigger email notifications via Edge Function (include honeypot for server-side spam detection)
-      const { error: emailError } = await supabase.functions.invoke('send-consultation-emails', {
+      console.log('Calling send-consultation-emails function...');
+      const emailResponse = await supabase.functions.invoke('send-consultation-emails', {
         body: { ...insertData, honeypot: formData.honeypot }
       });
 
-      if (emailError) {
-        console.error('Email notification error:', emailError);
+      console.log('Email function response:', emailResponse);
+
+      if (emailResponse.error) {
+        console.error('Email function error:', emailResponse.error);
         // Handle rate limiting error specifically
-        if (emailError.message?.includes('Too many requests')) {
+        if (emailResponse.error.message?.includes('Too many requests')) {
           toast({
             title: "Rate Limited",
             description: "Too many submissions. Please try again in an hour.",
@@ -128,13 +131,30 @@ export const ContactSection = () => {
           });
           return;
         }
-        // Still show success since the data was saved
+        
+        toast({
+          title: "Submission Successful",
+          description: "Your consultation request has been saved, but there may have been an issue sending email notifications. We'll still contact you soon!",
+          variant: "default",
+        });
+      } else {
+        // Check email delivery status from response
+        const emailStatus = emailResponse.data?.emailStatus;
+        
+        if (emailStatus && !emailStatus.adminEmail) {
+          console.warn('Admin email delivery failed:', emailStatus.adminError);
+          toast({
+            title: "Request Submitted Successfully",
+            description: "Your request was received! Note: Admin notification may have failed - if urgent, please call us at 910-638-4342.",
+            variant: "default",
+          });
+        } else {
+          toast({
+            title: "Consultation Request Submitted!",
+            description: "We'll contact you within 24 hours to discuss your training goals.",
+          });
+        }
       }
-
-      toast({
-        title: "Consultation Request Submitted!",
-        description: "We'll contact you within 24 hours to discuss your training goals.",
-      });
 
       // Reset form
       setFormData({
