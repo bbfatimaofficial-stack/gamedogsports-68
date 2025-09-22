@@ -9,7 +9,7 @@ export const ProgramsSection = () => {
   const programs = [
     {
       icon: Target,
-      title: "Baseball Excellence",
+      title: "BASEBALL & SOFTBALL EXCELLENCE",
       description: "Master hitting mechanics, fielding techniques, and game strategy. From Little League to college prep, we develop complete players.",
       features: ["Batting Mechanics", "Fielding Fundamentals", "Pitching Development", "Game Situations"]
     },
