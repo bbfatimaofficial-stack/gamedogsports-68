@@ -6,6 +6,7 @@ import { TestimonialNavigation } from "./testimonials/TestimonialNavigation";
 import amberWParent from "@/assets/amber-w-parent.jpg";
 import jamarWParent from "@/assets/jamar-w-parent.jpg";
 import shatinaSParent from "@/assets/shatina-s-parent.jpg";
+import londynWilliams from "@/assets/londyn-williams.jpg";
 
 export const TestimonialsSection = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
@@ -53,6 +54,7 @@ export const TestimonialsSection = () => {
       quote: "He pushes me to the next level, and he does this by making sure my skills and mental game are the strongest. He is my favorite coach.",
       achievement: "Class of 2033 • Rising Star", 
       avatar: "LW",
+      image: londynWilliams,
       icon: Flame,
       sport: "Baseball",
       improvement: "Skills & Mental Game",
