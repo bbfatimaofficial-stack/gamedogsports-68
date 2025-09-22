@@ -6,7 +6,7 @@ import { TestimonialNavigation } from "./testimonials/TestimonialNavigation";
 import amberWParent from "@/assets/amber-w-parent.png";
 import jamarWParent from "@/assets/jamar-w-parent.jpg";
 import shatinaSParent from "@/assets/shatina-s-parent.jpg";
-import londynWilliams from "@/assets/londyn-williams.jpg";
+import londynWilliams from "@/assets/londyn-williams.png";
 
 export const TestimonialsSection = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
