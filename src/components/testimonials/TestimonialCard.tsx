@@ -8,7 +8,7 @@ interface TestimonialCardProps {
     quote: string;
     achievement: string;
     avatar: string;
-    image: string;
+    image?: string;
     icon: any;
     sport: string;
     improvement: string;
@@ -26,11 +26,13 @@ export const TestimonialCard = ({ testimonial }: TestimonialCardProps) => {
         <div className="flex items-center gap-6">
           <div className="relative">
             <Avatar className="w-20 h-20 ring-4 ring-primary/20 transition-all duration-300 group-hover:ring-primary/40">
-              <AvatarImage 
-                src={testimonial.image} 
-                alt={testimonial.name}
-                className="object-cover"
-              />
+              {testimonial.image && (
+                <AvatarImage 
+                  src={testimonial.image} 
+                  alt={testimonial.name}
+                  className="object-cover"
+                />
+              )}
               <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-bold">
                 {testimonial.avatar}
               </AvatarFallback>

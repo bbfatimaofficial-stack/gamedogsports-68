@@ -1,64 +1,56 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Target, Award, TrendingUp, Star } from "lucide-react";
+import { Target, Award, TrendingUp, Star, Heart } from "lucide-react";
 import { TestimonialCard } from "./testimonials/TestimonialCard";
 import { TestimonialNavigation } from "./testimonials/TestimonialNavigation";
-import marcusImg from "@/assets/marcus-rodriguez.jpg";
-import sarahImg from "@/assets/sarah-chen.jpg";
-import davidImg from "@/assets/david-thompson.jpg";
-import alexImg from "@/assets/alex-martinez.jpg";
 
 export const TestimonialsSection = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
   const testimonials = [
     {
-      name: "Marcus Rodriguez",
-      role: "High School Baseball Player",
-      quote: "Game Dogs Sports completely transformed my game. I went from riding the bench to starting varsity and getting college scouts at my games. Coach Nick doesn't just train your body - he builds champions.",
-      achievement: "Varsity Starter • College Recruit",
-      avatar: "MR",
-      image: marcusImg,
-      icon: Award,
+      name: "Amber W.",
+      role: "Parent",
+      quote: "Coach Nick has truly been a game-changer for my son. After a difficult experience with a previous coach, my son had lost his love for baseball and his confidence was at an all-time low. Coach Nick not only restored his passion for the game but also built him back up as a player and a person. Through his knowledge, encouragement, and genuine passion, Coach Nick has elevated my son's performance to an entirely new level. He now steps onto the high school field with confidence, excitement, and the skills to succeed.",
+      achievement: "Restored Passion • High School Success",
+      avatar: "AW",
+      icon: Heart,
       sport: "Baseball",
-      improvement: "+40% Performance",
-      color: "from-blue-500 to-purple-600"
+      improvement: "Complete Transformation",
+      color: "from-pink-500 to-rose-600"
     },
     {
-      name: "Sarah Chen", 
-      role: "Track & Field Athlete",
-      quote: "The speed training program is incredible. I dropped 0.3 seconds off my 100m time in just 8 weeks. The mental performance coaching gave me the confidence to compete at state level.",
-      achievement: "State Qualifier • School Record Holder",
-      avatar: "SC",
-      image: sarahImg,
-      icon: TrendingUp,
-      sport: "Track & Field",
-      improvement: "0.3s Faster",
-      color: "from-green-500 to-teal-600"
-    },
-    {
-      name: "David Thompson",
-      role: "Parent", 
-      quote: "My son was struggling with confidence on the field. After 6 months at Game Dogs Sports, he's not only a better player but a more confident young man. The character development is just as important as the athletic training.",
-      achievement: "Proud Parent • Life Changed",
-      avatar: "DT",
-      image: davidImg,
+      name: "Jamar W.", 
+      role: "Parent",
+      quote: "My daughter began training with Coach Nick at just 9 years old, and the transformation has been incredible. Coach Nick has a gift for inspiring her and pushing her to reach her full potential. She looks forward to every session, and always leaves motivated, confident, and ready to take on the world. Thanks to his guidance, my daughter now steps onto the softball field with confidence and composure, even under pressure.",
+      achievement: "9 Years Old to Star • Pressure Performer",
+      avatar: "JW",
       icon: Star,
-      sport: "Development",
-      improvement: "100% Confidence",
-      color: "from-orange-500 to-red-600"
+      sport: "Softball",
+      improvement: "Unmatched Confidence",
+      color: "from-blue-500 to-indigo-600"
     },
     {
-      name: "Alex Martinez",
-      role: "College Baseball Player",
-      quote: "I trained here every summer during high school. The strength and conditioning program prepared me for Division I baseball. I still use the mental techniques Coach Nick taught me during clutch moments.",
-      achievement: "D1 Scholarship • All-Conference", 
-      avatar: "AM",
-      image: alexImg,
+      name: "Shatina S.",
+      role: "Parent", 
+      quote: "Coach Nick has been an incredible influence on my son, both in baseball and track. Through his focus on building not just physical strength but also the mental side of the game, my son has grown tremendously. He's now placing in the top 3 for track and dominating on the baseball field with a new level of confidence. What I love most is seeing the young man my son has become through Coach Nick's mentorship—stronger, more resilient, and truly believing in himself.",
+      achievement: "Top 3 Track • Baseball Domination",
+      avatar: "SS",
+      icon: TrendingUp,
+      sport: "Multi-Sport",
+      improvement: "Mental & Physical Growth",
+      color: "from-green-500 to-emerald-600"
+    },
+    {
+      name: "Jamar W.",
+      role: "Parent",
+      quote: "Man, let me keep it all the way real—Coach Nick is the truth. The way he pours into Brayden, you can see it every time my son hits that field. Nick's passion for the game ain't just about baseball, it's about building young men. He took my boy's confidence to another level and brought out the best version of him, on and off the diamond. His knowledge, his training, the way he breaks it down—it's sharpening Brayden's skills and setting him up for that next level.",
+      achievement: "Next Level Ready • Complete Development", 
+      avatar: "JW",
       icon: Award,
       sport: "Baseball",
-      improvement: "D1 Ready",
-      color: "from-purple-500 to-pink-600"
+      improvement: "Building Champions",
+      color: "from-orange-500 to-amber-600"
     }
   ];
 

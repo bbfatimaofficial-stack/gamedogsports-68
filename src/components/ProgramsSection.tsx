@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Target, Zap, Dumbbell, Brain, Flame } from "lucide-react";
+import { Target, Zap, Dumbbell, Brain, Flame, GraduationCap, Sun } from "lucide-react";
 
 export const ProgramsSection = () => {
   const scrollToSection = (sectionId: string) => {
@@ -30,6 +30,22 @@ export const ProgramsSection = () => {
       title: "Mental Performance",
       description: "Champions are made in the mind first. Develop unshakeable confidence, laser focus, and clutch performance under pressure.",
       features: ["Confidence Building", "Focus Training", "Pressure Performance", "Goal Achievement"]
+    },
+    {
+      icon: GraduationCap,
+      title: "After School Program",
+      description: "\"Classroom First\" / \"Mind Over Diamonds\" - Start off the school year great with homework support, tutoring, and baseball training.",
+      features: ["Homework & Tutoring", "Baseball Coaching", "Mentorship", "Character Building"],
+      schedule: "Aug-Dec | Tue & Thu 4-6pm",
+      age: "6th to 8th Grade"
+    },
+    {
+      icon: Sun,
+      title: "Summer Camp",
+      description: "Comprehensive summer program emphasizing education, life skills, and athletic development with special guest speakers and career guidance.",
+      features: ["Mentorship & Mindset", "Educational Information", "Life Skills", "Athletic Training"],
+      schedule: "June-Aug | 8am-12pm",
+      age: "6th to 12th Grade"
     }
   ];
 
@@ -47,7 +63,7 @@ export const ProgramsSection = () => {
         </div>
 
         {/* Programs Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {programs.map((program, index) => {
             const IconComponent = program.icon;
             return (
@@ -63,6 +79,13 @@ export const ProgramsSection = () => {
                 <p className="text-game-dog-gray-light mb-6 font-body leading-relaxed group-hover:text-white transition-colors">
                   {program.description}
                 </p>
+
+                {(program as any).schedule && (
+                  <div className="mb-4">
+                    <p className="text-sm text-game-dog-red font-semibold">{(program as any).schedule}</p>
+                    <p className="text-sm text-game-dog-gray-medium">{(program as any).age}</p>
+                  </div>
+                )}
 
                 <ul className="space-y-2 mb-8">
                   {program.features.map((feature, featureIndex) => (
