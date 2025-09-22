@@ -3,6 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Target, Award, TrendingUp, Star, Heart } from "lucide-react";
 import { TestimonialCard } from "./testimonials/TestimonialCard";
 import { TestimonialNavigation } from "./testimonials/TestimonialNavigation";
+import amberWParent from "@/assets/amber-w-parent.jpg";
+import jamarWParent from "@/assets/jamar-w-parent.jpg";
+import shatinaSParent from "@/assets/shatina-s-parent.jpg";
 
 export const TestimonialsSection = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
@@ -14,6 +17,7 @@ export const TestimonialsSection = () => {
       quote: "Coach Nick has truly been a game-changer for my son. After a difficult experience with a previous coach, my son had lost his love for baseball and his confidence was at an all-time low. Coach Nick not only restored his passion for the game but also built him back up as a player and a person. Through his knowledge, encouragement, and genuine passion, Coach Nick has elevated my son's performance to an entirely new level. He now steps onto the high school field with confidence, excitement, and the skills to succeed.",
       achievement: "Restored Passion • High School Success",
       avatar: "AW",
+      image: amberWParent,
       icon: Heart,
       sport: "Baseball",
       improvement: "Complete Transformation",
@@ -25,6 +29,7 @@ export const TestimonialsSection = () => {
       quote: "My daughter began training with Coach Nick at just 9 years old, and the transformation has been incredible. Coach Nick has a gift for inspiring her and pushing her to reach her full potential. She looks forward to every session, and always leaves motivated, confident, and ready to take on the world. Thanks to his guidance, my daughter now steps onto the softball field with confidence and composure, even under pressure.",
       achievement: "9 Years Old to Star • Pressure Performer",
       avatar: "JW",
+      image: jamarWParent,
       icon: Star,
       sport: "Softball",
       improvement: "Unmatched Confidence",
@@ -36,6 +41,7 @@ export const TestimonialsSection = () => {
       quote: "Coach Nick has been an incredible influence on my son, both in baseball and track. Through his focus on building not just physical strength but also the mental side of the game, my son has grown tremendously. He's now placing in the top 3 for track and dominating on the baseball field with a new level of confidence. What I love most is seeing the young man my son has become through Coach Nick's mentorship—stronger, more resilient, and truly believing in himself.",
       achievement: "Top 3 Track • Baseball Domination",
       avatar: "SS",
+      image: shatinaSParent,
       icon: TrendingUp,
       sport: "Multi-Sport",
       improvement: "Mental & Physical Growth",
@@ -47,6 +53,7 @@ export const TestimonialsSection = () => {
       quote: "Man, let me keep it all the way real—Coach Nick is the truth. The way he pours into Brayden, you can see it every time my son hits that field. Nick's passion for the game ain't just about baseball, it's about building young men. He took my boy's confidence to another level and brought out the best version of him, on and off the diamond. His knowledge, his training, the way he breaks it down—it's sharpening Brayden's skills and setting him up for that next level.",
       achievement: "Next Level Ready • Complete Development", 
       avatar: "JW",
+      image: jamarWParent,
       icon: Award,
       sport: "Baseball",
       improvement: "Building Champions",
