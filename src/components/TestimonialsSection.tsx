@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Target, Award, TrendingUp, Star, Heart, Flame } from "lucide-react";
 import { TestimonialCard } from "./testimonials/TestimonialCard";
 import { TestimonialNavigation } from "./testimonials/TestimonialNavigation";
-import amberWParent from "@/assets/amber-w-parent.jpg";
+import amberWParent from "@/assets/amber-w-parent.png";
 import jamarWParent from "@/assets/jamar-w-parent.jpg";
 import shatinaSParent from "@/assets/shatina-s-parent.jpg";
 import londynWilliams from "@/assets/londyn-williams.jpg";
