@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Target, Award, TrendingUp, Star, Heart, Flame } from "lucide-react";
+import { Target, Award, TrendingUp, Star, Heart } from "lucide-react";
 import { TestimonialCard } from "./testimonials/TestimonialCard";
 import { TestimonialNavigation } from "./testimonials/TestimonialNavigation";
-import amberWParent from "@/assets/amber-w-parent.png";
+import amberWParent from "@/assets/amber-w-parent.jpg";
 import jamarWParent from "@/assets/jamar-w-parent.jpg";
 import shatinaSParent from "@/assets/shatina-s-parent.jpg";
-import londynWilliams from "@/assets/londyn-williams.png";
 
 export const TestimonialsSection = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
@@ -49,16 +48,16 @@ export const TestimonialsSection = () => {
       color: "from-green-500 to-emerald-600"
     },
     {
-      name: "Londyn Williams",
-      role: "Athlete",
-      quote: "He pushes me to the next level, and he does this by making sure my skills and mental game are the strongest. He is my favorite coach.",
-      achievement: "Class of 2033 • Rising Star", 
-      avatar: "LW",
-      image: londynWilliams,
-      icon: Flame,
+      name: "Jamar W.",
+      role: "Parent",
+      quote: "Man, let me keep it all the way real—Coach Nick is the truth. The way he pours into Brayden, you can see it every time my son hits that field. Nick's passion for the game ain't just about baseball, it's about building young men. He took my boy's confidence to another level and brought out the best version of him, on and off the diamond. His knowledge, his training, the way he breaks it down—it's sharpening Brayden's skills and setting him up for that next level.",
+      achievement: "Next Level Ready • Complete Development", 
+      avatar: "JW",
+      image: jamarWParent,
+      icon: Award,
       sport: "Baseball",
-      improvement: "Skills & Mental Game",
-      color: "from-orange-500 to-amber-600",
+      improvement: "Building Champions",
+      color: "from-orange-500 to-amber-600"
     }
   ];
 
