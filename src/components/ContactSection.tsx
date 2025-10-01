@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Phone, MapPin, Send, Users, Clock, TrendingUp } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 
 export const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -20,18 +19,15 @@ export const ContactSection = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submission started');
     
     // Check honeypot field (should be empty)
     if (formData.honeypot.trim() !== '') {
-      console.warn('Spam detected: honeypot field filled');
       // Silently ignore spam submissions
       return;
     }
     
     // Enhanced form validation
     if (!formData.name || !formData.email || !formData.message) {
-      console.log('Form validation failed');
       toast({
         title: "Missing Information",
         description: "Please fill out all required fields.",
@@ -82,79 +78,31 @@ export const ContactSection = () => {
     }
 
     setIsSubmitting(true);
-    console.log('Starting database insertion...');
 
     try {
-      // Insert consultation into database
-      const insertData = {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone || null,
-        sport: formData.sport || null,
-        message: formData.message
-      };
-      
-      console.log('Inserting data into consultations table:', insertData);
-      
-      const { error } = await supabase
-        .from('consultations')
-        .insert(insertData);
-
-      console.log('Database insert completed - error:', error);
-
-      if (error) {
-        console.error('Error inserting consultation:', error);
-        toast({
-          title: "Submission Failed",
-          description: "There was an error submitting your consultation. Please try again.",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Trigger email notifications via Edge Function (include honeypot for server-side spam detection)
-      console.log('Calling send-consultation-emails function...');
-      const emailResponse = await supabase.functions.invoke('send-consultation-emails', {
-        body: { ...insertData, honeypot: formData.honeypot }
+      // Submit to Formspree - Replace YOUR_FORM_ID with your actual Formspree form ID
+      const response = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          sport: formData.sport,
+          message: formData.message,
+        }),
       });
 
-      console.log('Email function response:', emailResponse);
-
-      if (emailResponse.error) {
-        console.error('Email function error:', emailResponse.error);
-        // Handle rate limiting error specifically
-        if (emailResponse.error.message?.includes('Too many requests')) {
-          toast({
-            title: "Rate Limited",
-            description: "Too many submissions. Please try again in an hour.",
-            variant: "destructive"
-          });
-          return;
-        }
-        
-        toast({
-          title: "Submission Successful",
-          description: "Your consultation request has been saved, but there may have been an issue sending email notifications. We'll still contact you soon!",
-          variant: "default",
-        });
-      } else {
-        // Check email delivery status from response
-        const emailStatus = emailResponse.data?.emailStatus;
-        
-        if (emailStatus && !emailStatus.adminEmail) {
-          console.warn('Admin email delivery failed:', emailStatus.adminError);
-          toast({
-            title: "Request Submitted Successfully",
-            description: "Your request was received! Note: Admin notification may have failed - if urgent, please call us at 910-638-4342.",
-            variant: "default",
-          });
-        } else {
-          toast({
-            title: "Consultation Request Submitted!",
-            description: "We'll contact you within 24 hours to discuss your training goals.",
-          });
-        }
+      if (!response.ok) {
+        throw new Error('Form submission failed');
       }
+
+      toast({
+        title: "Consultation Request Submitted!",
+        description: "We'll contact you within 24 hours to discuss your training goals.",
+      });
 
       // Reset form
       setFormData({
@@ -170,7 +118,7 @@ export const ContactSection = () => {
       console.error('Unexpected error:', error);
       toast({
         title: "Submission Failed",
-        description: "There was an unexpected error. Please try again or contact us directly.",
+        description: "There was an unexpected error. Please try again or contact us directly at ContactcarolinaGD@gmail.com or 910-638-4342.",
         variant: "destructive"
       });
     } finally {
